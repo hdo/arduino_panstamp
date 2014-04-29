@@ -34,7 +34,9 @@
 #define SPI_MOSI 11     // PB3 = MOSI
 #define SPI_MISO 12     // PB4 = MISO
 #define SPI_SCK  13     // PB5 = SCK
-#define GDO0	 2        // PD2 = INT0
+//#define GDO0	 2        // PD2 = INT0
+#define GDO0	 8        // PB0 = ICP // ARDUINO style!
+
 
 #define PORT_SPI_MISO  PINB
 #define BIT_SPI_MISO  4
@@ -42,8 +44,12 @@
 #define PORT_SPI_SS  PORTB
 #define BIT_SPI_SS   2
 
-#define PORT_GDO0  PIND
-#define BIT_GDO0  2
+//#define PORT_GDO0  PIND
+//#define BIT_GDO0  2
+
+// configuration for custom board
+#define PORT_GDO0  PINB
+#define BIT_GDO0  0
 
 /**
  * Macros
