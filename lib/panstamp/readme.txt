@@ -1,0 +1,1 @@
+based on http://www.panstamp.com/downloads
