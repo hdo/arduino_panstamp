@@ -24,7 +24,10 @@
 
 #include "panstamp.h"
 #include "commonregs.h"
+
+extern "C" {
 #include "myinterrupt.h"
+}
 
 #define enableIRQ_GDO0()   myAttachInterrupt(isrGDO0event);
 #define disableIRQ_GDO0()  myDetachInterrupt();
