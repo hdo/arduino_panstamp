@@ -75,6 +75,12 @@ void setup()
   // Init panStamp
   panstamp.init();
 
+  // multiple of 8 is optimal (see PANSTAMP::goToSleep)
+  byte interval[2] = {0, 16}; // high low
+
+  // set initial TX Interval
+  panstamp.setTxInterval(interval, 1);
+
   // Transmit product code
   getRegister(REGI_PRODUCTCODE)->getData();
 
