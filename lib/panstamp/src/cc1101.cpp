@@ -24,6 +24,7 @@
 
 #include "cc1101.h"
 #include "nvolat.h"
+#include "config.h"
 
 /**
  * Macros

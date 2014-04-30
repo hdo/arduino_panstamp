@@ -2,9 +2,9 @@
 #include <avr/io.h>
 #include "myinterrupt.h"
 #include "Arduino.h"
+#include "config.h"
 
-//#define myGetGDO0state()  bitRead(PORT_GDO0, BIT_GDO0)
-#define myGetGDO0state()  bitRead(PINB, 0)
+#define myGetGDO0state()  bitRead(PORT_GDO0, BIT_GDO0)
 
 static volatile myVoidFuncPtr myIntFunc;
 
