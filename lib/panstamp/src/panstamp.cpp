@@ -24,10 +24,10 @@
 
 #include "panstamp.h"
 #include "commonregs.h"
-#include "calibration.h"
+#include "myinterrupt.h"
 
-#define enableIRQ_GDO0()          attachInterrupt(0, isrGDO0event, FALLING);
-#define disableIRQ_GDO0()         detachInterrupt(0);
+#define enableIRQ_GDO0()   myAttachInterrupt(isrGDO0event);
+#define disableIRQ_GDO0()  myDetachInterrupt();
 
 DEFINE_COMMON_REGINDEX_START()
 DEFINE_COMMON_REGINDEX_END()
@@ -261,7 +261,9 @@ void PANSTAMP::setup_rtc(byte time)
 void PANSTAMP::init() 
 {
   // Calibrate internal RC oscillator
-  rtcCrystal = rcOscCalibrate();
+  //rtcCrystal = rcOscCalibrate();
+  // disable calibration
+  rtcCrystal = 0;
 
   // Setup CC1101
   cc1101.init();

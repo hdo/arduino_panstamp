@@ -40,15 +40,29 @@
 #include "TimerOne.h"
 #include "EEPROM.h"
 #include "modem.h"
-#include "calibration.h"
+//#include "myinterrupt.h"
+
+#define myGetGDO0state()  bitRead(PINB, 0)
+
 
 /**
  * LED pin
  */
-#define LEDPIN               4
+//#define LEDPIN               4
 
 byte charToHex(byte ch);
 void swReset(void);
+
+
+void enableINT0irq() {
+	PCICR |= _BV(PCIE0);
+	PCMSK0 |= _BV(PCINT0);
+}
+
+void disableINT0irq() {
+	PCMSK0 &= ~_BV(PCINT0);
+}
+
 
 /**
  * isrINT0event
@@ -244,11 +258,13 @@ void handleSerialCmd(char* command)
  */
 void setup()
 {
+	/*
   pinMode(LEDPIN, OUTPUT);
   digitalWrite(LEDPIN, HIGH);
+  */
  
   // Calibrate internal RC oscillator
-  rcOscCalibrate();
+  // rcOscCalibrate();
   
   // Reset serial buffer
   memset(strSerial, 0, sizeof(strSerial));
@@ -394,3 +410,9 @@ void swReset(void)
   while (1) {}
 }
 
+ISR(PCINT0_vect) {
+	// catch falling edge
+	if(!myGetGDO0state()) {
+		isrINT0event();
+	}
+}

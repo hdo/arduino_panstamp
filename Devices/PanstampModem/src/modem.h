@@ -54,8 +54,8 @@
 /**
  * Macros
  */
-#define enableINT0irq()    attachInterrupt(0, isrINT0event, FALLING); digitalWrite(LEDPIN, LOW)
-#define disableINT0irq()   detachInterrupt(0); digitalWrite(LEDPIN, HIGH)
+//#define enableINT0irq()    myAttachInterrupt(isrINT0event)
+//#define disableINT0irq()   myDetachInterrupt()
 #define resetTimer()       t1Ticks = 0
 
 /**

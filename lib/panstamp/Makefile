@@ -10,10 +10,9 @@ CXXFLAGS += -I../arduinocore/src
 CXXFLAGS += -I../arduinoeeprom/src
 
 # Sources
-C_SRC = 
+C_SRC = src/myinterrupt.c
 
-CPP_SRC = src/calibration.cpp \
-src/cc1101.cpp \
+CPP_SRC = src/cc1101.cpp \
 src/panstamp.cpp \
 src/register.cpp \
 src/repeater.cpp \
