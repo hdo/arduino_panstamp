@@ -327,7 +327,7 @@ void PANSTAMP::reset()
 void PANSTAMP::sleepWd(byte time) 
 {
   // Power-down CC1101
-  cc1101.setPowerDownState();
+  //cc1101.setPowerDownState();
   // Power-down panStamp
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
@@ -345,7 +345,7 @@ void PANSTAMP::sleepWd(byte time)
   // ZZZZZZZZ...
 
   // Wake-up!!
-  wakeUp(false);
+  //wakeUp(false);
 }
 
 /**
@@ -429,64 +429,25 @@ void PANSTAMP::goToSleep(void)
   byte minTime;
   
   // No interval? Then return
-  if (intInterval == 0)
-    return;
+  if (intInterval == 0) {
+	  return;
+  }
 
-  // Search the maximum sleep time passed as argument to sleepWd that best
-  // suits our desired interval
-  if (intInterval % 8 == 0)
-  {
-    loops = intInterval / 8;
-    
-    if (rtcCrystal)
-      minTime = RTC_8S;
-    else
-      minTime = WDTO_8S;
+  loops = intInterval / 8;
+  if (loops == 0) {
+	  // at least 8 seconds
+	  loops = 1;
   }
-  else if (intInterval % 4 == 0)
-  {
-    if (rtcCrystal)
-    {
-      loops = intInterval / 2;
-      minTime = RTC_2S;
-    }
-    else
-    {
-      loops = intInterval / 4;
-      minTime = WDTO_4S;
-    }
-  }
-  else if (intInterval % 2 == 0)
-  {
-    loops = intInterval / 2;
-    if (rtcCrystal)    
-      minTime = RTC_2S;
-    else
-      minTime = WDTO_2S;
-  }
-  else
-  {
-    loops = intInterval;
-    if (rtcCrystal)
-      minTime = RTC_1S;
-    else
-      minTime = WDTO_1S;
-  }
+  minTime = WDTO_8S;
 
   systemState = SYSTATE_RXOFF;
+  cc1101.setPowerDownState();
 
   // Sleep
-  for (i=0 ; i<loops ; i++)
-  {
-    // Exit sleeping loop?
-    if (systemState == SYSTATE_RXON)
-      break;
-
-    if (rtcCrystal)
-      sleepRtc(minTime);
-    else
+  for (i=0 ; i<loops ; i++) {
       sleepWd(minTime);
   }
+  wakeUp(false);
   systemState = SYSTATE_RXON;
 }
 
