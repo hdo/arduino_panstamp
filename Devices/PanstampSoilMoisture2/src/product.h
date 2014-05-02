@@ -40,12 +40,12 @@
 /**
  * Manufacturer SWAP ID
  */
-#define SWAP_MANUFACT_ID        0x00000261
+#define SWAP_MANUFACT_ID        0x00000105 // = 261 decimal
 
 /**
  * Product SWAP ID
  */
-#define SWAP_PRODUCT_ID         0x00000026
+#define SWAP_PRODUCT_ID         0x00000001
 
 #endif
 
