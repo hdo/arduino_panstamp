@@ -48,7 +48,7 @@
  */
 #define VOLT_SUPPLY_A7
 #define INITIAL_SLEEP_INTERVAl 8
-#define INITIAL_SLEEP_COUNT 3
+#define INITIAL_SLEEP_COUNT 5
 #define DEFAULT_SLEEP_INTERVAL 900 // about 15 minutes
 
 uint8_t current_sleep_count = 0;
