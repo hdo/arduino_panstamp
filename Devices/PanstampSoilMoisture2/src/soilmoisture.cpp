@@ -38,7 +38,7 @@
  * configuration parameters:
  * soilmoisture.xml
  */
- 
+
 #include "regtable.h"
 #include "panstamp.h"
 #include "board.h"
@@ -47,43 +47,54 @@
  * Uncomment if you are reading Vcc from A7. All battery-boards do this
  */
 #define VOLT_SUPPLY_A7
+#define INITIAL_SLEEP_INTERVAl 8
+#define INITIAL_SLEEP_COUNT 3
+#define DEFAULT_SLEEP_INTERVAL 900 // about 15 minutes
 
+uint8_t current_sleep_count = 0;
+uint8_t is_initial_sleep_interval = 1;
+
+void set_sleep_interval(uint16_t intval) {
+	// multiple of 8 is optimal (see PANSTAMP::goToSleep)
+	byte interval[2] = { (intval >> 8) & 0xFF, intval & 0xFF }; // high low
+
+	// set initial TX Interval
+	panstamp.setTxInterval(interval, 1);
+}
 
 /**
  * setup
  *
  * Arduino setup function
  */
-void setup()
-{
-  int i;
+void setup() {
 
-  // Initialize power pins
-  pinMode(POWER_0_PIN, OUTPUT);
-  digitalWrite(POWER_0_PIN, LOW);
+	//eepromToFactoryDefaults();
 
-  // Init panStamp
-  panstamp.init();
+	// Initialize power pins
+	pinMode(POWER_0_PIN, OUTPUT);
+	digitalWrite(POWER_0_PIN, LOW);
 
-  // multiple of 8 is optimal (see PANSTAMP::goToSleep)
-  byte interval[2] = {0, 8}; // high low
+	// Init panStamp
+	panstamp.init();
 
-  // set initial TX Interval
-  panstamp.setTxInterval(interval, 1);
+	set_sleep_interval(INITIAL_SLEEP_INTERVAl);
 
-  // Transmit product code
-  getRegister(REGI_PRODUCTCODE)->getData();
+	// Transmit product code
+	getRegister(REGI_PRODUCTCODE)->getData();
 
-  // Enter SYNC state
-  panstamp.enterSystemState(SYSTATE_SYNC);
+	// Enter SYNC state
+	panstamp.enterSystemState(SYSTATE_SYNC);
 
+	// Transmit periodic Tx interval
+	getRegister(REGI_TXINTERVAL)->getData();
+	// Transmit power voltage
+	getRegister(REGI_VOLTSUPPLY)->getData();
 
-  // Transmit periodic Tx interval
-  getRegister(REGI_TXINTERVAL)->getData();
-  // Transmit power voltage
-  getRegister(REGI_VOLTSUPPLY)->getData();
-   // Switch to Rx OFF state
-  panstamp.enterSystemState(SYSTATE_RXOFF);
+	// wait 5 seconds to receive commands
+	delay(5000);
+	// Switch to Rx OFF state
+	panstamp.enterSystemState(SYSTATE_RXOFF);
 }
 
 /**
@@ -91,14 +102,27 @@ void setup()
  *
  * Arduino main loop
  */
-void loop()
-{
-  // Transmit sensor data
-  getRegister(REGI_SENSOR)->getData();
-  // Transmit power voltage
-  getRegister(REGI_VOLTSUPPLY)->getData();
+void loop() {
+	// Transmit sensor data
+	getRegister(REGI_SENSOR)->getData();
+	// Transmit power voltage
+	getRegister(REGI_VOLTSUPPLY)->getData();
 
-  // Sleep
-  panstamp.goToSleep();
+	if (current_sleep_count < INITIAL_SLEEP_COUNT) {
+		current_sleep_count++;
+	}
+	else {
+		if (is_initial_sleep_interval) {
+			is_initial_sleep_interval = 0;
+			set_sleep_interval(DEFAULT_SLEEP_INTERVAL);
+			// send new interval info
+			getRegister(REGI_TXINTERVAL)->getData();
+		}
+	}
+
+	// wait 1 second to receive commands
+	delay(1000);
+	// Sleep
+	panstamp.goToSleep();
 }
 

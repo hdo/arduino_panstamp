@@ -85,6 +85,7 @@ void setup()
   panstamp.enterSystemState(SYSTATE_RXOFF);
 
   initDS18B20();
+  //Serial.begin(38400);
 }
 
 /**

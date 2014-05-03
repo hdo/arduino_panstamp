@@ -54,7 +54,7 @@ static unsigned long voltageSupply = 3300;
 static byte dtVoltSupply[2];
 REGISTER regVoltSupply(dtVoltSupply, sizeof(dtVoltSupply), &updtVoltSupply, NULL);
 // Sensor value register (dual sensor)
-static byte dtSensor[4];
+static byte dtSensor[2];
 REGISTER regSensor(dtSensor, sizeof(dtSensor), &updtSensor, NULL);
 
 /**
@@ -145,8 +145,6 @@ const void updtSensor(byte rId)
   // Update register value
   dtSensor[0] = (value >> 8) & 0xFF;
   dtSensor[1] = value & 0xFF;
-  dtSensor[2] = 0;
-  dtSensor[3] = 0;
 
   // Unpower sensors
   digitalWrite(POWER_0_PIN, LOW);

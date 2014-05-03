@@ -151,13 +151,13 @@ const void updtSensor(byte rId)
   uint8_t vz = 0;
   if (temp < 0.0) {
  	  vz = 1;
+ 	  temp = temp * -1.0;
   }
-  uint8_t z1 = (int) (floor(temp));
-  uint8_t z2 = (int) ((temp - floor(temp)) * 100);
+  uint16_t z = (int) (temp * 100);
 
   dtSensor[0] = vz;
-  dtSensor[1] = z1;
-  dtSensor[2] = z2;
+  dtSensor[1] = (z >> 8) & 0xFF;
+  dtSensor[2] = (z & 0xFF);
 
   // Unpower sensors
   digitalWrite(POWER_0_PIN, LOW);

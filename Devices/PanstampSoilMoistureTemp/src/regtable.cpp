@@ -48,10 +48,10 @@ const void updtVoltSupply(byte rId);
 const void updtSensor(byte rId);
 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
-OneWire oneWire(SENSOR_1_PIN);
+static OneWire oneWire(SENSOR_1_PIN);
 
 // Pass our oneWire reference to Dallas Temperature.
-DallasTemperature sensors(&oneWire);
+static DallasTemperature sensors(&oneWire);
 
 /*
  * Definition of custom registers
@@ -154,27 +154,27 @@ const void updtSensor(byte rId)
   delay(500);
   
   uint16_t value = readTimer1();
+  //uint16_t value = 0;
   // Update register value
   dtSensor[0] = (value >> 8) & 0xFF;
   dtSensor[1] = value & 0xFF;
-  dtSensor[2] = 0;
-  dtSensor[3] = 0;
-  dtSensor[4] = 0;
 
-  // Start up the DS18B20 library
+  //oneWire.reset();
   //sensors.begin();
+  sensors.requestTemperatures(); // Send the command to get temperatures
 
   float temp=sensors.getTempCByIndex(0);
   uint8_t vz = 0;
   if (temp < 0.0) {
  	  vz = 1;
+ 	  temp = temp * -1.0;
   }
-  uint8_t z1 = (int) (floor(temp));
-  uint8_t z2 = (int) ((temp - floor(temp)) * 100);
+  //Serial.println(temp);
+  uint16_t z = (int) (temp * 100);
 
   dtSensor[2] = vz;
-  dtSensor[3] = z1;
-  dtSensor[4] = z2;
+  dtSensor[3] = (z >> 8) & 0xFF;
+  dtSensor[4] = (z & 0xFF);
 
   // Unpower sensors
   digitalWrite(POWER_0_PIN, LOW);
