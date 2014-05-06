@@ -47,12 +47,11 @@
  * Uncomment if you are reading Vcc from A7. All battery-boards do this
  */
 #define VOLT_SUPPLY_A7
-#define INITIAL_SLEEP_INTERVAl 8
-#define INITIAL_SLEEP_COUNT 5
+#define INITIAL_DELAY_INTERVAL 5000
+#define INITIAL_DELAY_COUNT 6
 #define DEFAULT_SLEEP_INTERVAL 900 // about 15 minutes
 
-uint8_t current_sleep_count = 0;
-uint8_t is_initial_sleep_interval = 1;
+uint8_t current_delay_count = 0;
 
 void set_sleep_interval(uint16_t intval) {
 	// multiple of 8 is optimal (see PANSTAMP::goToSleep)
@@ -78,7 +77,7 @@ void setup() {
 	// Init panStamp
 	panstamp.init();
 
-	set_sleep_interval(INITIAL_SLEEP_INTERVAl);
+	set_sleep_interval(DEFAULT_SLEEP_INTERVAL);
 
 	// Transmit product code
 	getRegister(REGI_PRODUCTCODE)->getData();
@@ -91,8 +90,6 @@ void setup() {
 	// Transmit power voltage
 	getRegister(REGI_VOLTSUPPLY)->getData();
 
-	// wait 5 seconds to receive commands
-	delay(5000);
 	// Switch to Rx OFF state
 	panstamp.enterSystemState(SYSTATE_RXOFF);
 }
@@ -108,16 +105,10 @@ void loop() {
 	// Transmit power voltage
 	getRegister(REGI_VOLTSUPPLY)->getData();
 
-	if (current_sleep_count < INITIAL_SLEEP_COUNT) {
-		current_sleep_count++;
-	}
-	else {
-		if (is_initial_sleep_interval) {
-			is_initial_sleep_interval = 0;
-			set_sleep_interval(DEFAULT_SLEEP_INTERVAL);
-			// send new interval info
-			getRegister(REGI_TXINTERVAL)->getData();
-		}
+	if (current_delay_count < INITIAL_DELAY_COUNT) {
+		current_delay_count++;
+		delay(INITIAL_DELAY_INTERVAL);
+		return;
 	}
 
 	// wait 1 second to receive commands
