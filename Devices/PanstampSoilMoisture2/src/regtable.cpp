@@ -141,8 +141,15 @@ const void updtSensor(byte rId)
   digitalWrite(POWER_0_PIN, HIGH);
   delay(200);
   
-  uint16_t value = readTimer1();
-  // Update register value
+  /*
+   * low moisture -> high value
+   * low moisture -> low value
+   * so we need to invert the value
+   * divide by 10 to decrease sensitivity
+   */
+  uint16_t value = (0xFFFF - readTimer1()) / 10;
+
+  // Update register tempValue
   dtSensor[0] = (value >> 8) & 0xFF;
   dtSensor[1] = value & 0xFF;
 
